@@ -123,6 +123,11 @@ void main(int arc, char* argv) {
 
 }
 
+/**
+ * Function to get the input from the user
+ * Params: int* N - A pointer to the number 'N' of the NxN matrix
+ *         int* T - A pointer to the number of iterations
+ */
 void getInput(int* N, int* T) {
     // Get the size of the matrix
     int valid = 0;
@@ -144,4 +149,4 @@ void getInput(int* N, int* T) {
         }
     }
 }
-
+ 
