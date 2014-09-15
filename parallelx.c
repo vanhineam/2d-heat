@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <omp.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
@@ -8,8 +9,9 @@
 
 void getInput(int*, int*);
 
-int main(int arc, char* argv) {
-    clock_t begin,end;
+void main(int arc, char* argv) {
+    omp_set_num_threads(4);
+    double begin,end;
     double time_spent;
     int iteration, i, j, current, next, N, T;
 
@@ -43,12 +45,13 @@ int main(int arc, char* argv) {
     }
 
     // Get the start time of the program
-    begin = clock();
+    begin = omp_get_wtime();
 
     // The actual calculation of the temperature of the room.
     current = 0;
     next = 1;
     for (iteration = 0; iteration < T; iteration++) {
+        #pragma omp parallel for private(i, j)
         for( i = 1; i < N-1; i++) {
             for( j = 1; j < N-1; j++) {
                 h[next][i][j] = 0.25 * (h[current][i-1][j] + h[current][i+1][j]+ h[current][i][j-1] + h[current][i][j+1]);
@@ -59,9 +62,9 @@ int main(int arc, char* argv) {
     }
 
     // Get the end time
-    end = clock();
+    end = omp_get_wtime();
     // Calculate the time spent
-    time_spent = (double)(end-begin) /CLOCKS_PER_SEC;
+    time_spent = end - begin;
 
     // Print an 8x8 array the N/8 x N/8 positions of the room.
     for(i = 0; i < N; i+= N/8) {
@@ -75,6 +78,9 @@ int main(int arc, char* argv) {
     // Print the time in seconds that the program took to run
     printf("The program took %f seconds to run.\n", time_spent);
 
+    /* Draw X stuff
+    *
+    */
     Window win;
     unsigned int width, height,
     win_x, win_y,
@@ -137,6 +143,7 @@ int main(int arc, char* argv) {
     XClearWindow(display,win);
     XSetForeground(display,gc, (long) 0xDC143C);
     int x_counter, y_counter = 0;
+    #pragma omp for private(i, j)
     for(i = 0; i < N; i++) {
         for(j = 0; j < N; j++){
             if(h[0][i][j] >= 0.0 && h[0][i][j] <= 5.0){
@@ -182,8 +189,6 @@ int main(int arc, char* argv) {
 
     XFlush(display);
     usleep(10000000);
-    return 0;
-
 }
 
 void getInput(int* N, int* T) {

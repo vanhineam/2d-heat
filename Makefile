@@ -6,8 +6,14 @@ task1: sequential.c
 task2: openmp.c
 	gcc -fopenmp openmp.c -o openmp
 
+sample: sample.c
+	gcc sample.c -o sample -lm -lX11
+
 task3: sequentialx.c
-	gcc sequentialx.c -o sample -lm -lX11
+	gcc sequentialx.c -o map -lm -lX11
+
+parallelx: parallelx.c
+	gcc -fopenmp parallelx.c -o parallel -lm -lX11
 
 clean:
-	rm -f openmp sequential sample
+	rm -f openmp sequential sample map parallel
