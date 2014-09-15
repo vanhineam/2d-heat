@@ -13,6 +13,12 @@ void main(int arc, char* argv) {
     //initaialize the array
     double h[2][N][N];
 
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            h[0][i][j] = 0;
+            h[1][i][j] = 0;
+        }
+    }
     // Set all the walls to 20C degrees
     for(i = 0; i < N; i++) {
         h[0][0][i] = 20.0;
